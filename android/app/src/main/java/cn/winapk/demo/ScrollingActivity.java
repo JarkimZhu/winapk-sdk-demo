@@ -1,16 +1,22 @@
 package cn.winapk.demo;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.Arrays;
+
+import cn.winapk.sdk.WinApk;
 
 public class ScrollingActivity extends AppCompatActivity {
 
@@ -18,17 +24,42 @@ public class ScrollingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
+
+        WinApk.INSTANCE.init(this, new WinApk.Options("123"), (slotId, event, data) -> {
+
+        });
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_list_item_1,
+                Arrays.asList("全屏", "插屏", "横幅")
+        );
+
+        ListView demoList = findViewById(R.id.demo_list);
+        demoList.setAdapter(adapter);
+
+        demoList.setOnItemClickListener((parent, view, position, id) -> {
+            switch (position) {
+                case 0:
+                    WinApk.INSTANCE.showFullScreenVideo(this, "test-001");
+                    break;
+                case 1:
+                    showInterCut(parent);
+                    break;
+                case 2:
+                    startActivity(new Intent(this, BannerActivity.class));
+                    break;
             }
         });
+    }
+
+    private void showInterCut(AdapterView<?> parent) {
+
     }
 
     @Override
